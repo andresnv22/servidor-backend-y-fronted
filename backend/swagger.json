@@ -1,0 +1,60 @@
+{
+  "openapi": "3.0.0",
+  "info": { "title": "API Biblioteca", "version": "1.0.0" },
+  "servers": [{ "url": "http://localhost:3000" }],
+  "components": {
+    "schemas": {
+      "Libro": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "titulo": { "type": "string", "example": "Rayuela" },
+          "autor": { "type": "string", "example": "Julio Cortázar" }
+        }
+      },
+      "NuevoLibro": {
+        "type": "object",
+        "required": ["titulo", "autor"],
+        "properties": {
+          "titulo": { "type": "string", "example": "Ficciones" },
+          "autor": { "type": "string", "example": "Jorge Luis Borges" }
+        }
+      },
+      "Error": { "type": "object", "properties": { "error": { "type": "string" } } }
+    }
+  },
+  "paths": {
+    "/api/libros": {
+      "get": {
+        "summary": "Lista todos los libros",
+        "responses": {
+          "200": {
+            "description": "Lista de libros",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Libro" } } } }
+          }
+        }
+      },
+      "post": {
+        "summary": "Crea un libro",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/NuevoLibro" } } }
+        },
+        "responses": {
+          "201": { "description": "Libro creado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Libro" } } } },
+          "400": { "description": "Falta título o autor", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/api/libros/{id}": {
+      "delete": {
+        "summary": "Elimina un libro",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": {
+          "204": { "description": "Libro eliminado" },
+          "404": { "description": "Libro no encontrado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    }
+  }
+}
